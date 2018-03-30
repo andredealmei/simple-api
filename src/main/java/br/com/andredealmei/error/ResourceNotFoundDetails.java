@@ -1,48 +1,18 @@
 package br.com.andredealmei.error;
 
-public class ResourceNotFoundDetails {
-
-    private String title;
-
-    private int status;
-
-    private String details;
-
-    private Long timestamp;
-
-    private String developerMessage;
-
-    private ResourceNotFoundDetails() {
-    }
+public class ResourceNotFoundDetails extends ErrorDetail {
 
 
 
-    public String getTitle() {
-        return title;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public Long getTimestamp() {
-        return timestamp;
-    }
-
-    public String getDeveloperMessage() {
-        return developerMessage;
-    }
 
     public static final class builder {
+
         private String title;
         private int status;
         private String details;
         private Long timestamp;
         private String developerMessage;
+
 
         private builder() {
         }
@@ -78,11 +48,11 @@ public class ResourceNotFoundDetails {
 
         public ResourceNotFoundDetails build() {
             ResourceNotFoundDetails resourceNotFoundDetails = new ResourceNotFoundDetails();
-            resourceNotFoundDetails.title = this.title;
-            resourceNotFoundDetails.developerMessage = this.developerMessage;
-            resourceNotFoundDetails.status = this.status;
-            resourceNotFoundDetails.details = this.details;
-            resourceNotFoundDetails.timestamp = this.timestamp;
+            resourceNotFoundDetails.setTitle(this.title);
+            resourceNotFoundDetails.setDeveloperMessage(this.developerMessage);
+            resourceNotFoundDetails.setStatus(this.status);
+            resourceNotFoundDetails.setDetails(this.details);
+            resourceNotFoundDetails.setTimestamp(this.timestamp);
             return resourceNotFoundDetails;
         }
     }
