@@ -1,6 +1,6 @@
 package br.com.andredealmei.error;
 
-public class ResourceNotFoundDetails extends ErrorDetail {
+public class ResourceNotFoundDetails extends ErrorDetails {
 
 
 
