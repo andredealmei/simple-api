@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +32,8 @@ public class StudentEndpoint {
 
 
     /*
-    * for pagination list use this url below
-    * ?page=1&size=5
+    * for pagination and sort list use this url below
+    * /students?sort=name,asc&sort=email,desc&page=2
     */
     @GetMapping()
     public ResponseEntity<?> listAll(Pageable pageable) {
@@ -39,7 +42,9 @@ public class StudentEndpoint {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getStudentByid(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getStudentByid(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetails userDetails) {
+
+        System.out.println(userDetails);
 
         verifyIfStudentExists(id);
 
@@ -57,6 +62,7 @@ public class StudentEndpoint {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         verifyIfStudentExists(id);
 
