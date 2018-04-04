@@ -19,7 +19,7 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping("students")
+@RequestMapping("v1")
 public class StudentEndpoint {
 
 
@@ -35,13 +35,13 @@ public class StudentEndpoint {
     * for pagination and sort list use this url below
     * /students?sort=name,asc&sort=email,desc&page=2
     */
-    @GetMapping()
+    @GetMapping("protected/students")
     public ResponseEntity<?> listAll(Pageable pageable) {
 
         return new ResponseEntity<>(studentRepository.findAll(pageable), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/protected/students/{id}")
     public ResponseEntity<?> getStudentByid(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetails userDetails) {
 
         System.out.println(userDetails);
@@ -53,7 +53,7 @@ public class StudentEndpoint {
 
     }
 
-    @PostMapping
+    @PostMapping("admin/students")
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<?> save(@Valid @RequestBody Student student) {
         studentRepository.save(student);
@@ -61,7 +61,7 @@ public class StudentEndpoint {
 
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("admin/students/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         verifyIfStudentExists(id);
@@ -72,7 +72,7 @@ public class StudentEndpoint {
 
     }
 
-    @PutMapping
+    @PutMapping("admin/students")
     public ResponseEntity<?> update(@RequestBody Student student) {
 
         verifyIfStudentExists(student.getId());
@@ -84,7 +84,7 @@ public class StudentEndpoint {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/name/{name}")
+    @GetMapping("protected/students/name/{name}")
     public ResponseEntity<?> findStudentsByName(@PathVariable String name) {
 
         return new ResponseEntity<>(studentRepository.findByNameIgnoreCaseContaining(name), HttpStatus.OK);
