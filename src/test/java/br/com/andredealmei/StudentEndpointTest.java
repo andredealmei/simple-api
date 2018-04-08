@@ -2,6 +2,7 @@ package br.com.andredealmei;
 
 import br.com.andredealmei.model.Student;
 import br.com.andredealmei.repository.StudentRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -45,6 +47,12 @@ public class StudentEndpointTest {
 
         }
 
+    }
+
+    @Before
+    public void setup() {
+        Student student = new Student(1L, "Andre", "andre@email.com");
+        BDDMockito.when(studentRepository.findById(student.getId())).thenReturn(java.util.Optional.ofNullable(student));
     }
 
     @Test /* test if  returned correct HttpStatusCode  when username or password are incorrect */
@@ -91,12 +99,8 @@ public class StudentEndpointTest {
     @Test /* test if  returned correct HttpStatusCode  when username or password are correct in search by existing id */
     public void getStudentByIdWhenUsernameAndPasswordAreCorrectShouldReturnStatusCode200() {
 
-        Student student = new Student(1L, "Andre", "andre@email.com");
-
-        BDDMockito.when(studentRepository.findById(student.getId())).thenReturn(java.util.Optional.ofNullable(student));
-
         ResponseEntity<String> responsy = restTemplate.getForEntity("/v1/protected/students/{id}",
-                String.class, student.getId());
+                String.class, 1L);
 
         assertThat(responsy.getStatusCodeValue()).isEqualTo(200);
 
@@ -110,6 +114,36 @@ public class StudentEndpointTest {
                 String.class, -1);
 
         assertThat(responsy.getStatusCodeValue()).isEqualTo(404);
+
+
+    }
+
+    @Test /* test if  returned correct HttpStatusCode  when username or password of a ADMIN are correct in search by existing id */
+    public void deleteWhenUserHasRoleAdminAndStudentExistsShouldReturnStatusCode200() {
+
+        BDDMockito.doNothing().when(studentRepository).deleteById(1L);
+
+        TestRestTemplate template = restTemplate.withBasicAuth("andre", "123");
+
+        ResponseEntity<String> exchange = template.exchange("/v1/admin/students/{id}",
+                HttpMethod.DELETE, null, String.class, 1L);
+
+        assertThat(exchange.getStatusCodeValue()).isEqualTo(200);
+
+
+    }
+
+    @Test /* test if  returned correct HttpStatusCode  when username or password of a ADMIN are correct in search by non-existing id */
+    public void deleteWhenUserHasRoleAdminAndStudentDoesNotExistsShouldReturnStatusCode404() {
+
+        BDDMockito.doNothing().when(studentRepository).deleteById(1L);
+
+        TestRestTemplate template = restTemplate.withBasicAuth("andre", "123");
+
+        ResponseEntity<String> exchange = template.exchange("/v1/admin/students/{id}",
+                HttpMethod.DELETE, null, String.class, -1L);
+
+        assertThat(exchange.getStatusCodeValue()).isEqualTo(404);
 
 
     }
