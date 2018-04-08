@@ -44,12 +44,23 @@ public class StudentEndpointTest {
 
     @Test /* test if  returned correct HttpStatusCode  when username or password are incorrect */
     public void listStudentsWhenUsernameAndPasswordAreIncorrectShouldReturnStatusCode401() {
-        TestRestTemplate testRestTemplaterestTemplate = restTemplate.withBasicAuth("123", "123");
-        ResponseEntity<String> responsy = testRestTemplaterestTemplate.getForEntity("/v1/protected/students/",
+        TestRestTemplate template = restTemplate.withBasicAuth("123", "123");
+        ResponseEntity<String> responsy = template.getForEntity("/v1/protected/students/",
                 String.class);
         assertThat(responsy.getStatusCodeValue()).isEqualTo(401);
 
 
     }
+
+    @Test /* test if  returned correct HttpStatusCode  when username or password are incorrect in search by id */
+    public void getStudentByIdWhenUsernameAndPasswordAreIncorrectShouldReturnStatusCode401() {
+        TestRestTemplate template = restTemplate.withBasicAuth("123", "123");
+        ResponseEntity<String> responsy = template.getForEntity("/v1/protected/students/8",
+                String.class);
+        assertThat(responsy.getStatusCodeValue()).isEqualTo(401);
+
+
+    }
+
 
 }
