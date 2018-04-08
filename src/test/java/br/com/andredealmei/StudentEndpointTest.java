@@ -41,7 +41,7 @@ public class StudentEndpointTest {
         @Bean
         public RestTemplateBuilder restTemplateBuilder() {
 
-            return new RestTemplateBuilder().basicAuthorization("andre", "123");
+            return new RestTemplateBuilder().basicAuthorization("usuario", "123");
 
         }
 
@@ -59,6 +59,23 @@ public class StudentEndpointTest {
 
     }
 
+    @Test /* test if  returned correct HttpStatusCode  when username or password are correct */
+    public void listStudentsWhenUsernameAndPasswordAreCorrectShouldReturnStatusCode200() {
+        List<Student> students = Arrays.asList(
+                new Student(1L, "Andre", "andre@email.com"),
+                new Student(2L, "Pedro", "pedro@email.com"),
+                new Student(3L, "Alan", "alan@email.com")
+        );
+
+        BDDMockito.when(studentRepository.findAll()).thenReturn(students);
+
+        ResponseEntity<String> responsy = restTemplate.getForEntity("/v1/protected/students/",
+                String.class);
+        assertThat(responsy.getStatusCodeValue()).isEqualTo(200);
+
+
+    }
+
     @Test /* test if  returned correct HttpStatusCode  when username or password are incorrect in search by id */
     public void getStudentByIdWhenUsernameAndPasswordAreIncorrectShouldReturnStatusCode401() {
         TestRestTemplate template = restTemplate.withBasicAuth("123", "123");
@@ -71,19 +88,16 @@ public class StudentEndpointTest {
 
     }
 
-    @Test /* test if  returned correct HttpStatusCode  when username or password are correct */
-    public void listStudentsWhenUsernameAndPasswordAreCorrectShouldReturnStatusCode200() {
-        List<Student> students = Arrays.asList(
-                new Student(1L, "Andre", "andre@email.com"),
-                new Student(2L, "Pedro", "pedro@email.com"),
-                new Student(3L, "Alan", "alan@email.com")
-        );
+    @Test /* test if  returned correct HttpStatusCode  when username or password are correct in search by id */
+    public void getStudentByIdWhenUsernameAndPasswordAreCorrectShouldReturnStatusCode200() {
 
-        BDDMockito.when(studentRepository.findAll()).thenReturn(students);
+        Student student = new Student(1L, "Andre", "andre@email.com");
 
-        TestRestTemplate template = restTemplate.withBasicAuth("usuario", "123");
-        ResponseEntity<String> responsy = template.getForEntity("/v1/protected/students/",
-                String.class);
+        BDDMockito.when(studentRepository.findById(student.getId())).thenReturn(java.util.Optional.ofNullable(student));
+
+        ResponseEntity<String> responsy = restTemplate.getForEntity("/v1/protected/students/{id}",
+                String.class, student.getId());
+
         assertThat(responsy.getStatusCodeValue()).isEqualTo(200);
 
 
