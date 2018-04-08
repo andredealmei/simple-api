@@ -88,7 +88,7 @@ public class StudentEndpointTest {
 
     }
 
-    @Test /* test if  returned correct HttpStatusCode  when username or password are correct in search by id */
+    @Test /* test if  returned correct HttpStatusCode  when username or password are correct in search by existing id */
     public void getStudentByIdWhenUsernameAndPasswordAreCorrectShouldReturnStatusCode200() {
 
         Student student = new Student(1L, "Andre", "andre@email.com");
@@ -99,6 +99,21 @@ public class StudentEndpointTest {
                 String.class, student.getId());
 
         assertThat(responsy.getStatusCodeValue()).isEqualTo(200);
+
+
+    }
+
+    @Test /* test if  returned correct HttpStatusCode  when username or password are correct in search by non-existing id */
+    public void getStudentByIdWhenUsernameAndPasswordAreCorrectAndStudentDoesNotExistShouldReturnStatusCode404() {
+
+        Student student = new Student(1L, "Andre", "andre@email.com");
+
+        BDDMockito.when(studentRepository.findById(student.getId())).thenReturn(java.util.Optional.ofNullable(student));
+
+        ResponseEntity<String> responsy = restTemplate.getForEntity("/v1/protected/students/{id}",
+                String.class, 50L);
+
+        assertThat(responsy.getStatusCodeValue()).isEqualTo(404);
 
 
     }
