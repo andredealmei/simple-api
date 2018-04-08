@@ -157,5 +157,19 @@ public class StudentEndpointTest {
 
     }
 
+    @Test /* test if  returned correct HttpStatusCode  when a user with role "USER" try do delete something  */
+    @WithMockUser(username = "andre",password = "123",roles = "USER")
+    public void deleteWhenUserDoesNotHaveRoleAdminAndStudentExistsOrDoesNotExistsShouldReturnStatusCode403() throws Exception {
+
+        BDDMockito.doNothing().when(studentRepository).deleteById(1L);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .delete("/v1/admin/students/{id}",1L))
+                .andExpect(MockMvcResultMatchers.status().isForbidden()
+        );
+
+
+    }
+
 
 }
