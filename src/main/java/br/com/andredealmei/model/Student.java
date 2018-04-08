@@ -7,12 +7,20 @@ import javax.validation.constraints.NotEmpty;
 @Entity
 public class Student extends AbstractEntity {
 
-    @NotEmpty
+    @NotEmpty(message = "nop")
     private String name;
 
     @NotEmpty
     @Email
     private String email;
+
+    public Student() {
+    }
+
+    public Student(@NotEmpty String name, @NotEmpty @Email String email) {
+        this.name = name;
+        this.email = email;
+    }
 
     public String getName() {
         return name;
