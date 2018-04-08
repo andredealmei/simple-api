@@ -16,8 +16,11 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Arrays;
 import java.util.List;
@@ -134,16 +137,22 @@ public class StudentEndpointTest {
     }
 
     @Test /* test if  returned correct HttpStatusCode  when username or password of a ADMIN are correct in search by non-existing id */
-    public void deleteWhenUserHasRoleAdminAndStudentDoesNotExistsShouldReturnStatusCode404() {
+    @WithMockUser(username = "andre",password = "123",roles = "ADMIN")
+    public void deleteWhenUserHasRoleAdminAndStudentDoesNotExistsShouldReturnStatusCode404() throws Exception {
 
         BDDMockito.doNothing().when(studentRepository).deleteById(1L);
 
-        TestRestTemplate template = restTemplate.withBasicAuth("andre", "123");
+        /*TestRestTemplate template = restTemplate.withBasicAuth("andre", "123");
 
         ResponseEntity<String> exchange = template.exchange("/v1/admin/students/{id}",
                 HttpMethod.DELETE, null, String.class, -1L);
 
-        assertThat(exchange.getStatusCodeValue()).isEqualTo(404);
+        assertThat(exchange.getStatusCodeValue()).isEqualTo(404);*/
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .delete("/v1/admin/students/{id}",-1L))
+                .andExpect(MockMvcResultMatchers.status().isNotFound()
+        );
 
 
     }
