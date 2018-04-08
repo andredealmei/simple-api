@@ -121,7 +121,7 @@ public class StudentEndpointTest {
 
     }
 
-    @Test /* test if  returned correct HttpStatusCode  when username or password of a ADMIN are correct in search by existing id */
+    @Test /* test if  returned correct HttpStatusCode  when username or password of a ADMIN are correct and try to delete a  existing id */
     public void deleteWhenUserHasRoleAdminAndStudentExistsShouldReturnStatusCode200() {
 
         BDDMockito.doNothing().when(studentRepository).deleteById(1L);
@@ -136,7 +136,7 @@ public class StudentEndpointTest {
 
     }
 
-    @Test /* test if  returned correct HttpStatusCode  when username or password of a ADMIN are correct in search by non-existing id */
+    @Test /* test if  returned correct HttpStatusCode  when a ADMIN are try to delete a non-existing id */
     @WithMockUser(username = "andre",password = "123",roles = "ADMIN")
     public void deleteWhenUserHasRoleAdminAndStudentDoesNotExistsShouldReturnStatusCode404() throws Exception {
 
@@ -157,9 +157,9 @@ public class StudentEndpointTest {
 
     }
 
-    @Test /* test if  returned correct HttpStatusCode  when a user with role "USER" try do delete something  */
+    @Test /* test if  returned correct HttpStatusCode  when a user with role "USER" try to delete something  */
     @WithMockUser(username = "andre",password = "123",roles = "USER")
-    public void deleteWhenUserDoesNotHaveRoleAdminAndStudentExistsOrDoesNotExistsShouldReturnStatusCode403() throws Exception {
+    public void deleteWhenUserDoesNotHaveRoleAdminShouldReturnStatusCode403() throws Exception {
 
         BDDMockito.doNothing().when(studentRepository).deleteById(1L);
 
@@ -171,5 +171,36 @@ public class StudentEndpointTest {
 
     }
 
+    @Test /* test if  returned correct HttpStatusCode  when a ADMIN try create a student without a name */
+    public void createWhenNameIsNullShouldReturnsCode400() throws Exception {
+
+        Student student = new Student(3L, null, "joao@email.com");
+
+        BDDMockito.when(studentRepository.save(student)).thenReturn(student);
+
+        TestRestTemplate template = restTemplate.withBasicAuth("andre", "123");
+        ResponseEntity<String> entity = template.postForEntity("/v1/admin/students/", student, String.class);
+
+        assertThat(entity.getStatusCodeValue()).isEqualTo(400);
+        assertThat(entity.getBody()).contains("fieldMessage", "o campo nome é obrigatorio");
+
+    }
+
+    @Test /* test if  returned correct HttpStatusCode  when a ADMIN create a student with success */
+    public void createShouldReturnsStatusCode201() throws Exception {
+
+        Student student = new Student(3L, "andre", "joao@email.com");
+
+        BDDMockito.when(studentRepository.save(student)).thenReturn(student);
+
+        TestRestTemplate template = restTemplate.withBasicAuth("andre", "123");
+        ResponseEntity<Student> entity = template.postForEntity("/v1/admin/students/", student, Student.class);
+
+        assertThat(entity.getBody().getId()).isNotNull();
+        assertThat(entity.getBody().getName()).isEqualTo("andre");
+        assertThat(entity.getBody().getEmail()).isEqualTo("joao@email.com");
+        assertThat(entity.getStatusCodeValue()).isEqualTo(201);
+
+    }
 
 }
