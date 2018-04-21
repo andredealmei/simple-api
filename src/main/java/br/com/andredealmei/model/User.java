@@ -1,7 +1,5 @@
 package br.com.andredealmei.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotEmpty;
@@ -16,7 +14,6 @@ public class User extends AbstractEntity {
     private String userName;
 
     @NotEmpty
-    @JsonIgnore
     private String password;
 
     @NotEmpty /*used a simple boolean var for preserve the simplicity of application*/
