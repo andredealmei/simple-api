@@ -17,8 +17,12 @@ import static br.com.andredealmei.config.SecutiryConstants.SIGN_UP_URL;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SpringSecurityConfig  extends WebSecurityConfigurerAdapter {
 
+    private final CustomUserDetailService customUserDetailService;
+
     @Autowired
-    private CustomUserDetailService customUserDetailService;
+    public SpringSecurityConfig(CustomUserDetailService customUserDetailService) {
+        this.customUserDetailService = customUserDetailService;
+    }
 
 //    @Override
 //    protected void configure(HttpSecurity http) throws Exception {

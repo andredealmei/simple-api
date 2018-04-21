@@ -19,7 +19,7 @@ public class User extends AbstractEntity {
     @NotEmpty /*used a simple boolean var for preserve the simplicity of application*/
     private boolean admin;
 
-    String nome;
+    private String nome;
 
     public String getUserName() {
         return userName;

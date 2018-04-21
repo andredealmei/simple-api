@@ -55,7 +55,7 @@ public class StudentEndpointTest {
     @Before
     public void setup() {
         Student student = new Student(1L, "Andre", "andre@email.com");
-        BDDMockito.when(studentRepository.findById(student.getId())).thenReturn(java.util.Optional.ofNullable(student));
+        BDDMockito.when(studentRepository.findById(student.getId())).thenReturn(java.util.Optional.of(student));
     }
 
     @Test /* test if  returned correct HttpStatusCode  when username or password are incorrect */
@@ -172,7 +172,7 @@ public class StudentEndpointTest {
     }
 
     @Test /* test if  returned correct HttpStatusCode  when a ADMIN try create a student without a name */
-    public void createWhenNameIsNullShouldReturnsCode400() throws Exception {
+    public void createWhenNameIsNullShouldReturnsCode400() {
 
         Student student = new Student(3L, null, "joao@email.com");
 
@@ -187,7 +187,7 @@ public class StudentEndpointTest {
     }
 
     @Test /* test if  returned correct HttpStatusCode  when a ADMIN create a student with success */
-    public void createShouldReturnsStatusCode201() throws Exception {
+    public void createShouldReturnsStatusCode201() {
 
         Student student = new Student(3L, "andre", "joao@email.com");
 

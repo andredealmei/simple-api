@@ -12,7 +12,7 @@ public class AbstractEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    protected Long id;
+    Long id;
 
     @Override
     public boolean equals(Object o) {
